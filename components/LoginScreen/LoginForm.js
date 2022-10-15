@@ -1,5 +1,6 @@
-import { View, Text } from 'react-native';
-import { useEffect } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { useEffect, useState } from 'react';
+import { EyeIcon, EyeSlashIcon } from 'react-native-heroicons/outline';
 
 import { TextInput } from '../global';
 import { emailRegex } from '../../constants/regex';
@@ -12,6 +13,8 @@ const LoginForm = ({
     errors,
     setErrors,
 }) => {
+    const [showPassword, setShowPassword] = useState(false);
+
     useEffect(() => {
         setErrors({});
 
@@ -76,10 +79,20 @@ const LoginForm = ({
                 <TextInput
                     placeholder="secretpassword"
                     autoCapitalize="none"
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
                     value={password}
                     onChangeText={(text) => setPassword(text)}
                 />
+                <TouchableOpacity
+                    className="absolute top-[45px] right-4"
+                    onPress={() => setShowPassword(!showPassword)}
+                >
+                    {showPassword ? (
+                        <EyeIcon size={20} color="black" />
+                    ) : (
+                        <EyeSlashIcon size={20} color="black" />
+                    )}
+                </TouchableOpacity>
                 {errors.password && (
                     <Text className="text-[10px] text-red-400 mt-0.5 font-medium">
                         {errors.password}
