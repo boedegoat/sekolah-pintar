@@ -18,5 +18,9 @@ module.exports = {
         'import/prefer-default-export': 'off',
         'import/prefer-default-import': 'off',
         'import/no-extraneous-dependencies': 'off',
+        'global-require': 'off',
+        'react/jsx-props-no-spreading': 'off',
+        'react/prop-types': 'off',
+        'no-use-before-define': 'off',
     },
 };

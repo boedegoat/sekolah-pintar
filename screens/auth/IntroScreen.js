@@ -1,8 +1,9 @@
-import { Text, SafeAreaView, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 
+import { Text } from '../../components/global';
 import { calculator, book, pencil, paint, thropy } from '../../assets/icons';
 
 const Intro = () => {
@@ -44,8 +45,13 @@ const Intro = () => {
                 />
             </View>
             <View className="absolute bottom-0 w-full p-5">
-                <View className="p-5 py-8 rounded-3xl shadow-2xl">
-                    <Text className="text-center font-bold text-2xl">
+                <View className="p-5 py-8">
+                    <Text
+                        className="text-center font-bold text-2xl"
+                        style={{
+                            fontFamily: 'Inter-Bold',
+                        }}
+                    >
                         Sudah siap untuk belajar?
                     </Text>
                     <Text className="text-center mt-3 text-gray-500">
