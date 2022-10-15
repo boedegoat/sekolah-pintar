@@ -1,7 +1,15 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
+import { ToastProvider } from 'react-native-toast-notifications';
 
 import * as Stacks from './stacks';
+import * as Toast from './components/global';
+
+const toastTypes = {
+    loading: Toast.LoadingToast,
+    success: Toast.SuccessToast,
+    error: Toast.ErrorToast,
+};
 
 const App = () => {
     const [fontsLoaded] = useFonts({
@@ -19,9 +27,13 @@ const App = () => {
     }
 
     return (
-        <NavigationContainer theme={{ colors: { background: 'transparent' } }}>
-            <Stacks.AuthStack />
-        </NavigationContainer>
+        <ToastProvider placement="top" offset={50} renderType={toastTypes}>
+            <NavigationContainer
+                theme={{ colors: { background: 'transparent' } }}
+            >
+                <Stacks.AuthStack />
+            </NavigationContainer>
+        </ToastProvider>
     );
 };
 

@@ -1,4 +1,10 @@
-import { View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+    View,
+    Image,
+    SafeAreaView,
+    TouchableOpacity,
+    Keyboard,
+} from 'react-native';
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -7,6 +13,7 @@ import {
     ExclamationCircleIcon,
 } from 'react-native-heroicons/outline';
 import loadash from 'lodash';
+import { useToast } from 'react-native-toast-notifications';
 
 import { Text } from '../../components/global';
 import { LoginForm } from '../../components/LoginScreen';
@@ -16,11 +23,28 @@ const Login = () => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const [errors, setErrors] = useState({});
+    const toast = useToast();
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
 
-    const loginWithEmail = () => {
+    const loginWithEmail = async () => {
+        Keyboard.dismiss();
+
+        const id = toast.show('Loading...', {
+            type: 'loading',
+            swipeEnabled: false,
+            duration: 99999,
+        });
+
         console.log({ email, password });
+
+        setTimeout(async () => {
+            toast.update(id, 'Berhasil masuk', {
+                type: 'success',
+                duration: 3000,
+                swipeEnabled: true,
+            });
+        }, 1000);
     };
 
     return (

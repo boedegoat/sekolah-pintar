@@ -22,5 +22,7 @@ module.exports = {
         'react/jsx-props-no-spreading': 'off',
         'react/prop-types': 'off',
         'no-use-before-define': 'off',
+        'no-promise-executor-return': 'off',
+        'react/destructuring-assignment': 'off',
     },
 };
