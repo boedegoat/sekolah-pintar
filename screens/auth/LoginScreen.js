@@ -1,5 +1,5 @@
 import { View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
     QrCodeIcon,
@@ -8,42 +8,14 @@ import {
 } from 'react-native-heroicons/outline';
 import loadash from 'lodash';
 
-import { Text, TextInput } from '../../components/global';
+import { Text } from '../../components/global';
+import { LoginForm } from '../../components/LoginScreen';
 import { backToSchool } from '../../assets/images';
-import { emailRegex } from '../../constants/regex';
 
 const Login = () => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-        setErrors({});
-
-        if (email) {
-            const isEmailValid = email.match(emailRegex);
-            if (!isEmailValid) {
-                setErrors((current) => ({
-                    ...current,
-                    email: 'Format email tidak sesuai',
-                }));
-            }
-        }
-
-        if (email === '') {
-            setErrors((current) => ({
-                ...current,
-                email: 'Email harus diisi',
-            }));
-        }
-
-        if (password === '') {
-            setErrors((current) => ({
-                ...current,
-                password: 'Password harus diisi',
-            }));
-        }
-    }, [email, password]);
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
 
@@ -76,52 +48,16 @@ const Login = () => {
                 </View>
 
                 {/* Input Form */}
-                <View className="mt-4 space-y-4">
-                    <View>
-                        <Text
-                            className="text-xs text-gray-600"
-                            style={{
-                                fontFamily: 'Inter-Medium',
-                            }}
-                        >
-                            Email
-                        </Text>
-                        <TextInput
-                            placeholder="example@email.com"
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            value={email}
-                            onChangeText={(text) => setEmail(text)}
-                        />
-                        {errors.email && (
-                            <Text className="text-[10px] text-red-400 mt-0.5 font-medium">
-                                {errors.email}
-                            </Text>
-                        )}
-                    </View>
-                    <View>
-                        <Text
-                            className="text-xs text-gray-600"
-                            style={{
-                                fontFamily: 'Inter-Medium',
-                            }}
-                        >
-                            Password
-                        </Text>
-                        <TextInput
-                            placeholder="secretpassword"
-                            autoCapitalize="none"
-                            secureTextEntry
-                            value={password}
-                            onChangeText={(text) => setPassword(text)}
-                        />
-                        {errors.password && (
-                            <Text className="text-[10px] text-red-400 mt-0.5 font-medium">
-                                {errors.password}
-                            </Text>
-                        )}
-                    </View>
-                </View>
+                <LoginForm
+                    {...{
+                        email,
+                        setEmail,
+                        password,
+                        setPassword,
+                        errors,
+                        setErrors,
+                    }}
+                />
 
                 {/* Buttons */}
                 <View className="mt-10 space-y-2">
