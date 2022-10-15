@@ -24,5 +24,6 @@ module.exports = {
         'no-use-before-define': 'off',
         'no-promise-executor-return': 'off',
         'react/destructuring-assignment': 'off',
+        'react/style-prop-object': 'off',
     },
 };

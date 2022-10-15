@@ -14,16 +14,20 @@ import {
 } from 'react-native-heroicons/outline';
 import loadash from 'lodash';
 import { useToast } from 'react-native-toast-notifications';
+import { useSetRecoilState } from 'recoil';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Text } from '../../components/global';
 import { InfoModal, LoginForm } from '../../components/LoginScreen';
 import { backToSchool } from '../../assets/images';
+import { authState } from '../../states';
 
 const Login = () => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const [errors, setErrors] = useState({});
     const [showInfoModal, setShowInfoModal] = useState(false);
+    const setAuth = useSetRecoilState(authState);
     const toast = useToast();
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
@@ -37,9 +41,20 @@ const Login = () => {
             duration: 99999,
         });
 
-        console.log({ email, password });
+        setTimeout(() => {
+            const authData = {
+                user: {
+                    name: 'budi',
+                    email: 'budi@smapj.id',
+                    school: 'SMA Plus Pembangunan Jaya',
+                    class: '12 IPA 2',
+                },
+                accessToken: 'abc123',
+            };
 
-        setTimeout(async () => {
+            AsyncStorage.setItem('auth', JSON.stringify(authData));
+            setAuth(authData);
+
             toast.update(id, 'Berhasil masuk', {
                 type: 'success',
                 duration: 3000,

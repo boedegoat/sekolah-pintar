@@ -1,9 +1,9 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { ToastProvider } from 'react-native-toast-notifications';
+import { RecoilRoot } from 'recoil';
 
-import * as Stacks from './stacks';
 import * as Toast from './components/global';
+import NavContainer from './stacks/NavContainer';
 
 const toastTypes = {
     loading: Toast.LoadingToast,
@@ -27,13 +27,11 @@ const App = () => {
     }
 
     return (
-        <ToastProvider placement="top" offset={50} renderType={toastTypes}>
-            <NavigationContainer
-                theme={{ colors: { background: 'transparent' } }}
-            >
-                <Stacks.AuthStack />
-            </NavigationContainer>
-        </ToastProvider>
+        <RecoilRoot>
+            <ToastProvider placement="top" offset={50} renderType={toastTypes}>
+                <NavContainer />
+            </ToastProvider>
+        </RecoilRoot>
     );
 };
 
