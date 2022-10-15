@@ -17,5 +17,6 @@ module.exports = {
         'react/function-component-definition': 'off',
         'import/prefer-default-export': 'off',
         'import/prefer-default-import': 'off',
+        'import/no-extraneous-dependencies': 'off',
     },
 };
