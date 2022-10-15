@@ -16,13 +16,14 @@ import loadash from 'lodash';
 import { useToast } from 'react-native-toast-notifications';
 
 import { Text } from '../../components/global';
-import { LoginForm } from '../../components/LoginScreen';
+import { InfoModal, LoginForm } from '../../components/LoginScreen';
 import { backToSchool } from '../../assets/images';
 
 const Login = () => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const [errors, setErrors] = useState({});
+    const [showInfoModal, setShowInfoModal] = useState(false);
     const toast = useToast();
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
@@ -63,7 +64,10 @@ const Login = () => {
                     >
                         Masuk
                     </Text>
-                    <TouchableOpacity className="bg-red-500 flex-row items-center space-x-2 px-2 py-1 rounded-lg">
+                    <TouchableOpacity
+                        onPress={() => setShowInfoModal(true)}
+                        className="bg-red-500 flex-row items-center space-x-2 px-2 py-1 rounded-lg"
+                    >
                         <ExclamationCircleIcon size={20} color="white" />
                         <Text className="text-white font-medium text-xs">
                             Info Penting
@@ -71,7 +75,11 @@ const Login = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Input Form */}
+                <InfoModal
+                    visible={showInfoModal}
+                    onClose={() => setShowInfoModal(false)}
+                />
+
                 <LoginForm
                     {...{
                         email,
