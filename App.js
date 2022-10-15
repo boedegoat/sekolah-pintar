@@ -4,7 +4,7 @@ import * as Stacks from './stacks';
 
 const App = () => {
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={{ colors: { background: 'transparent' } }}>
             <Stacks.AuthStack />
         </NavigationContainer>
     );
