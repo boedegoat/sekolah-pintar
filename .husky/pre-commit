@@ -3,7 +3,13 @@
 
 echo '🏗️👷 Styling and checking your project before committing'
 
-npm run format-all
+# Check Prettier standards
+npm run check-format ||
+(
+    echo '🤢🤮🤢🤮 Its FOKING RAW - Your styling looks disgusting. 🤢🤮🤢🤮
+            Prettier Check Failed. Run npm run format-all, add changes and try commit again.';
+    false;
+)
 
 # Check ESLint Standards
 npm run check-lint ||
