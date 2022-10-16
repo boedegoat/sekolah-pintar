@@ -20,47 +20,51 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text } from '../../components/global';
 import { InfoModal, LoginForm } from '../../components/LoginScreen';
 import { backToSchool } from '../../assets/images';
-import { authState } from '../../states';
+import { userState } from '../../states';
+import request from '../../utils/request';
 
 const Login = () => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const [errors, setErrors] = useState({});
     const [showInfoModal, setShowInfoModal] = useState(false);
-    const setAuth = useSetRecoilState(authState);
+    const setUser = useSetRecoilState(userState);
     const toast = useToast();
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
 
     const loginWithEmail = async () => {
         Keyboard.dismiss();
+        let id;
 
-        const id = toast.show('Loading...', {
-            type: 'loading',
-            swipeEnabled: false,
-            duration: 99999,
-        });
+        try {
+            id = toast.show('Loading...', {
+                type: 'loading',
+                swipeEnabled: false,
+                duration: 99999,
+            });
 
-        setTimeout(() => {
-            const authData = {
-                user: {
-                    name: 'budi',
-                    email: 'budi@smapj.id',
-                    school: 'SMA Plus Pembangunan Jaya',
-                    class: '12 IPA 2',
-                },
-                accessToken: 'abc123',
-            };
+            const { data: response } = await request.post('/auth/login', {
+                email,
+                password,
+            });
 
-            AsyncStorage.setItem('auth', JSON.stringify(authData));
-            setAuth(authData);
+            AsyncStorage.setItem('accessToken', response.data.accessToken);
+            setUser(response.data.user);
 
             toast.update(id, 'Berhasil masuk', {
                 type: 'success',
                 duration: 3000,
                 swipeEnabled: true,
             });
-        }, 1000);
+        } catch (error) {
+            console.log({ error });
+            toast.update(id, error.message, {
+                type: 'error',
+                duration: 3000,
+                swipeEnabled: true,
+            });
+        }
     };
 
     return (

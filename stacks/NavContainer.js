@@ -1,27 +1,31 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { useRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
-import { authState } from '../states';
+import { userState } from '../states';
+import request from '../utils/request';
 
 const NavContainer = () => {
-    const [auth, setAuth] = useRecoilState(authState);
+    const [user, setUser] = useRecoilState(userState);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const checkAuthInStorage = async () => {
+        const getMe = async () => {
             setLoading(true);
-            const authFromStorage = await AsyncStorage.getItem('auth');
-            if (authFromStorage) {
-                setAuth(JSON.parse(authFromStorage));
+
+            try {
+                const { data: response } = await request.get('/users/me');
+                setUser(response.data.user);
+            } catch (error) {
+                // silent error
             }
+
             setLoading(false);
         };
 
-        checkAuthInStorage();
+        getMe();
     }, []);
 
     if (loading) {
@@ -30,7 +34,7 @@ const NavContainer = () => {
 
     return (
         <NavigationContainer theme={{ colors: { background: 'transparent' } }}>
-            {auth.user ? <AppStack /> : <AuthStack />}
+            {user ? <AppStack /> : <AuthStack />}
         </NavigationContainer>
     );
 };
