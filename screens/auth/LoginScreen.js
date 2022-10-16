@@ -8,7 +8,7 @@ import {
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
-    QrCodeIcon,
+    // QrCodeIcon,
     AtSymbolIcon,
     ExclamationCircleIcon,
 } from 'react-native-heroicons/outline';
@@ -16,8 +16,8 @@ import loadash from 'lodash';
 import { useToast } from 'react-native-toast-notifications';
 import { useSetRecoilState } from 'recoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import { useNavigation } from '@react-navigation/native';
+// import { BarCodeScanner } from 'expo-barcode-scanner';
+// import { useNavigation } from '@react-navigation/native';
 
 import { Text } from '../../components/global';
 import { InfoModal, LoginForm } from '../../components/LoginScreen';
@@ -32,7 +32,7 @@ const Login = () => {
     const [showInfoModal, setShowInfoModal] = useState(false);
     const setUser = useSetRecoilState(userState);
     const toast = useToast();
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
 
@@ -70,12 +70,12 @@ const Login = () => {
         }
     };
 
-    const goToScannerScreen = async () => {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        if (status === 'granted') {
-            navigation.navigate('QRCodeScanner');
-        }
-    };
+    // const goToScannerScreen = async () => {
+    //     const { status } = await BarCodeScanner.requestPermissionsAsync();
+    //     if (status === 'granted') {
+    //         navigation.navigate('QRCodeScanner');
+    //     }
+    // };
 
     return (
         <SafeAreaView className="flex-1">
@@ -121,7 +121,7 @@ const Login = () => {
                 />
 
                 {/* Buttons */}
-                <View className="mt-10 pb-5 space-y-2">
+                <View className="mt-10 space-y-2">
                     <TouchableOpacity
                         className={`${
                             isValid ? 'opacity-100' : 'opacity-60'
@@ -134,7 +134,7 @@ const Login = () => {
                             Masuk dengan Email
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         onPress={goToScannerScreen}
                         className="border py-3 rounded-full shadow-2xl flex-row justify-center items-center space-x-3"
                     >
@@ -142,7 +142,7 @@ const Login = () => {
                         <Text className="font-semibold text-center">
                             Masuk dengan QR Code
                         </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             </View>
         </SafeAreaView>

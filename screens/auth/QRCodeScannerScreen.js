@@ -36,7 +36,7 @@ const QRCodeScannerScreen = () => {
             });
         } catch (error) {
             console.log({ error });
-            toast.update(id, error.message, {
+            toast.update(id, 'QR Code tidak dikenali', {
                 type: 'error',
                 duration: 3000,
                 swipeEnabled: true,
