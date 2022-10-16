@@ -33,7 +33,11 @@ const NavContainer = () => {
     }
 
     return (
-        <NavigationContainer theme={{ colors: { background: 'transparent' } }}>
+        <NavigationContainer
+            theme={{
+                colors: { background: 'transparent' },
+            }}
+        >
             {user ? <AppStack /> : <AuthStack />}
         </NavigationContainer>
     );

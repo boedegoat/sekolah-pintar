@@ -11,7 +11,7 @@ const Intro = () => {
 
     return (
         <SafeAreaView className="flex-1">
-            <StatusBar />
+            <StatusBar style="dark" />
             <View className="flex-1">
                 <SvgXml
                     className="absolute top-72 -left-8"

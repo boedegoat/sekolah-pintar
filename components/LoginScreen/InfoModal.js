@@ -48,7 +48,9 @@ const InfoModal = ({ visible, onClose }) => {
                             Untuk masuk dengan QR Code, buka{' '}
                             <Text
                                 onPress={() =>
-                                    Linking.openURL('https://shrtco.de/9vq39y')
+                                    Linking.openURL(
+                                        'https://sekolahpintar.vercel.app/images/qrcode-budi.png'
+                                    )
                                 }
                                 className="text-blue-500 underline"
                             >
