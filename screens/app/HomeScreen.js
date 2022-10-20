@@ -8,23 +8,19 @@ import {
 import React from 'react';
 import { useRecoilState } from 'recoil';
 import { StatusBar } from 'expo-status-bar';
+import { BellAlertIcon, MegaphoneIcon } from 'react-native-heroicons/outline';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-import colors from 'tailwindcss/colors';
-import {
-    BellAlertIcon,
-    CalendarIcon,
-    MegaphoneIcon,
-} from 'react-native-heroicons/outline';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 
 import { Text } from '../../components/global';
 import { userState } from '../../states';
+import ScheduleOverview from '../../components/HomeScreen/ScheduleOverview';
 
 // TODO: bikin sistem jadwal pelajaran dan agenda
 
 const HomeScreen = () => {
     const [user] = useRecoilState(userState);
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
 
     // const logout = () => {
     //     AsyncStorage.removeItem('accessToken');
@@ -62,11 +58,11 @@ const HomeScreen = () => {
 
                 {/* Announcement */}
                 <View className="p-5 pt-0">
-                    <View className="p-4 border-2 border-red-400 rounded-xl bg-red-100">
+                    <View className="p-3 border-2 border-red-400 rounded-xl bg-red-100">
                         <View className="absolute -top-2 -left-2 bg-red-500 rounded-full p-0.5 border border-red-400">
-                            <MegaphoneIcon color="white" size={21} />
+                            <MegaphoneIcon color="white" size={15} />
                         </View>
-                        <Text className="font-semibold">
+                        <Text className="font-semibold text-xs">
                             Kegiatan Edufair - Mohon semua siswa kumpul di aula
                             lantai 4
                         </Text>
@@ -74,83 +70,7 @@ const HomeScreen = () => {
                 </View>
 
                 {/* Schedule Overview */}
-                <View className="mt-2">
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Schedule')}
-                        className="mx-5 flex-row justify-between items-center"
-                    >
-                        <View>
-                            <View className="font-semibold flex-row text-xs items-center space-x-1">
-                                <CalendarIcon
-                                    size={18}
-                                    color={colors.gray[600]}
-                                />
-                                <Text className="text-xs text-gray-600">
-                                    Jadwal Pelajaran
-                                </Text>
-                            </View>
-                            <Text className="font-semibold">
-                                Senin, 22 Oktober 2022
-                            </Text>
-                        </View>
-                        <Text className="text-blue-500 font-medium">
-                            selengkapnya →
-                        </Text>
-                    </TouchableOpacity>
-                    <ScrollView
-                        className="mt-5"
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{ paddingHorizontal: 15 }}
-                        decelerationRate={0}
-                        snapToInterval={318}
-                        snapToAlignment="center"
-                    >
-                        <View className="w-[300] border-2 border-gray-400/50 mr-3 p-4 rounded-2xl">
-                            <Text>Pelajaran sebelumnya</Text>
-                            <Text className="font-bold text-2xl mt-2">
-                                Upacara
-                            </Text>
-                        </View>
-                        <View className="w-[300] border border-gray-500 mr-3 p-4 rounded-2xl bg-gray-800">
-                            <Text className="text-white">
-                                Pelajaran saat ini (
-                                {new Date().toLocaleTimeString().slice(0, 5)})
-                            </Text>
-                            <Text className="font-bold text-2xl mt-2 text-white">
-                                Matematika Peminatan
-                            </Text>
-                            <View className="flex-row items-center space-x-2 mt-1">
-                                <Image
-                                    source={{
-                                        uri: 'https://avatars.dicebear.com/api/big-ears-neutral/gilang.png',
-                                    }}
-                                    className="w-6 h-6 rounded-full"
-                                />
-                                <Text className="text-gray-100 font-medium">
-                                    Pak Gilang
-                                </Text>
-                            </View>
-                        </View>
-                        <View className="w-[300] border-2 border-gray-400/50 mr-3 p-4 rounded-2xl">
-                            <Text>Pelajaran setelahnya (09.00)</Text>
-                            <Text className="font-bold text-2xl mt-2">
-                                Bahasa Indonesia
-                            </Text>
-                            <View className="flex-row items-center space-x-2 mt-1">
-                                <Image
-                                    source={{
-                                        uri: 'https://avatars.dicebear.com/api/big-ears-neutral/nani%20septiani.png',
-                                    }}
-                                    className="w-6 h-6 rounded-full"
-                                />
-                                <Text className="text-gray-600 font-medium">
-                                    Bu Nani
-                                </Text>
-                            </View>
-                        </View>
-                    </ScrollView>
-                </View>
+                <ScheduleOverview />
 
                 {/* Mading */}
                 <View className="p-5 mt-3">

@@ -1,5 +1,4 @@
 import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
-import { useEffect, useState } from 'react';
 import {
     CalendarIcon,
     ChevronDownIcon,
@@ -11,26 +10,11 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Text } from '../../components/global';
 import { daftarPelajaranSenin } from '../../constants/dummyData';
+import { useNow } from '../../hooks';
 
 const ScheduleScreen = () => {
-    const [currentTimeInNumber, setCurrentTimeInNumber] = useState(
-        Number(new Date().toLocaleTimeString().slice(0, 5).replace(':', ''))
-    );
+    const now = useNow();
     const navigation = useNavigation();
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentTimeInNumber(
-                Number(
-                    new Date().toLocaleTimeString().slice(0, 5).replace(':', '')
-                )
-            );
-        }, 1000);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
 
     return (
         <SafeAreaView className="flex-1">
@@ -68,16 +52,16 @@ const ScheduleScreen = () => {
                     paddingHorizontal: 20,
                 }}
                 renderItem={({ item }) => {
-                    const startTimeInNumber = Number(
-                        item.jadwal.slice(0, 5).replace('.', '')
-                    );
-                    const endTimeInNumber = Number(
-                        item.jadwal.slice(8).replace('.', '')
-                    );
+                    const [start, end] = item.jadwal
+                        .split(' - ')
+                        .map((time) =>
+                            new Date().setHours(
+                                Number(time.slice(0, 2)),
+                                Number(time.slice(3))
+                            )
+                        );
 
-                    const isCurrent =
-                        startTimeInNumber <= currentTimeInNumber &&
-                        currentTimeInNumber < endTimeInNumber;
+                    const isCurrent = start <= now && now < end;
 
                     return (
                         <View className="mt-5">
@@ -98,7 +82,7 @@ const ScheduleScreen = () => {
                                 >
                                     {isCurrent && (
                                         <View
-                                            className="absolute h-[24px] w-[5px] rounded-full top-2.5 -left-0.5"
+                                            className="absolute h-[24px] w-[5px] rounded-full top-2 -left-0.5"
                                             style={{
                                                 backgroundColor:
                                                     item.color ||
@@ -122,7 +106,8 @@ const ScheduleScreen = () => {
                                 <View
                                     className={cn(
                                         'flex-1 p-2.5 rounded-xl',
-                                        !item.color && 'border border-gray-300'
+                                        !item.color &&
+                                            'border border-gray-400/50'
                                     )}
                                     style={{
                                         backgroundColor: item.color || 'white',
