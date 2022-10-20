@@ -32,8 +32,6 @@ const ScheduleScreen = () => {
         };
     }, []);
 
-    console.log({ currentTimeInNumber });
-
     return (
         <SafeAreaView className="flex-1">
             {/* Header */}
@@ -44,8 +42,8 @@ const ScheduleScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity>
                         <View className="font-semibold flex-row text-xs items-center space-x-1">
-                            <CalendarIcon size={20} color={colors.gray[600]} />
-                            <Text className="text-gray-600 text-xs">
+                            <CalendarIcon size={13} color={colors.gray[600]} />
+                            <Text className="text-gray-600 text-[10px]">
                                 Jadwal Pelajaran
                             </Text>
                         </View>
@@ -63,10 +61,11 @@ const ScheduleScreen = () => {
             </View>
 
             <FlatList
-                className="p-5 pt-0"
+                className="pt-0"
                 data={daftarPelajaranSenin}
                 contentContainerStyle={{
                     paddingBottom: 18,
+                    paddingHorizontal: 20,
                 }}
                 renderItem={({ item }) => {
                     const startTimeInNumber = Number(
@@ -83,19 +82,30 @@ const ScheduleScreen = () => {
                     return (
                         <View className="mt-5">
                             {isCurrent && (
-                                <Text className="text-xs mb-0.5">
+                                <Text className="text-xs mb-0.5 font-medium">
                                     Sekarang:
                                 </Text>
                             )}
                             <View className="flex-row justify-between items-start space-x-5 ">
+                                {/* Jadwal */}
                                 <View
                                     className={cn(
-                                        'p-2.5 rounded-lg',
+                                        'relative p-2.5 rounded-xl',
                                         isCurrent
                                             ? 'bg-gray-600'
                                             : 'bg-gray-200'
                                     )}
                                 >
+                                    {isCurrent && (
+                                        <View
+                                            className="absolute h-[24px] w-[5px] rounded-full top-2.5 -left-0.5"
+                                            style={{
+                                                backgroundColor:
+                                                    item.color ||
+                                                    colors.gray[500],
+                                            }}
+                                        />
+                                    )}
                                     <Text
                                         className={cn(
                                             'font-medium',
@@ -107,9 +117,11 @@ const ScheduleScreen = () => {
                                         {item.jadwal}
                                     </Text>
                                 </View>
+
+                                {/* Nama Pelajaran */}
                                 <View
                                     className={cn(
-                                        'flex-1 p-2.5 rounded-lg',
+                                        'flex-1 p-2.5 rounded-xl',
                                         !item.color && 'border border-gray-300'
                                     )}
                                     style={{
