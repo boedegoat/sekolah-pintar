@@ -15,6 +15,7 @@ import {
     CalendarIcon,
     MegaphoneIcon,
 } from 'react-native-heroicons/outline';
+import { useNavigation } from '@react-navigation/native';
 
 import { Text } from '../../components/global';
 import { userState } from '../../states';
@@ -23,6 +24,7 @@ import { userState } from '../../states';
 
 const HomeScreen = () => {
     const [user] = useRecoilState(userState);
+    const navigation = useNavigation();
 
     // const logout = () => {
     //     AsyncStorage.removeItem('accessToken');
@@ -71,9 +73,12 @@ const HomeScreen = () => {
                     </View>
                 </View>
 
-                {/* Class Schedule */}
+                {/* Schedule Overview */}
                 <View className="mt-2">
-                    <TouchableOpacity className="mx-5 flex-row justify-between items-center">
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Schedule')}
+                        className="mx-5 flex-row justify-between items-center"
+                    >
                         <View>
                             <View className="font-semibold flex-row text-xs items-center space-x-1">
                                 <CalendarIcon
