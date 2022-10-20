@@ -84,7 +84,7 @@ const Login = () => {
                 source={backToSchool}
                 className="w-full h-[50%] object-contain"
             />
-            <View className="absolute bottom-0 w-full bg-white p-8 rounded-t-3xl">
+            <View className="absolute top-[45%] bottom-0 w-full bg-white p-8 rounded-t-3xl">
                 {/* Header */}
                 <View className="flex-row justify-between items-center">
                     <Text
