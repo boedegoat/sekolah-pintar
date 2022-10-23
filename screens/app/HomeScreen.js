@@ -8,13 +8,13 @@ import {
 import React from 'react';
 import { useRecoilState } from 'recoil';
 import { StatusBar } from 'expo-status-bar';
-import { BellAlertIcon } from 'react-native-heroicons/outline';
+import { Squares2X2Icon } from 'react-native-heroicons/outline';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { useNavigation } from '@react-navigation/native';
 
 import { Text } from '../../components/global';
 import { userState } from '../../states';
-import ScheduleOverview from '../../components/HomeScreen/ScheduleOverview';
+import { ScheduleOverview, QuickButtons } from '../../components/HomeScreen';
 
 // TODO: bikin sistem jadwal pelajaran dan agenda
 
@@ -71,13 +71,13 @@ const HomeScreen = () => {
                     </View>
                 </View> */}
 
-                {/* Schedule Overview */}
+                <QuickButtons />
                 <ScheduleOverview />
 
                 {/* Mading */}
                 <View className="p-5 mt-3">
                     <View className="flex-row items-center space-x-1">
-                        <BellAlertIcon color="black" />
+                        <Squares2X2Icon color="black" />
                         <Text className="text-lg font-semibold">Mading</Text>
                     </View>
 

@@ -6,25 +6,20 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import {
-    AdjustmentsHorizontalIcon,
-    ArrowLeftIcon,
-} from 'react-native-heroicons/outline';
+import { AdjustmentsHorizontalIcon } from 'react-native-heroicons/outline';
 import colors from 'tailwindcss/colors';
 import cn from 'classnames';
-import { useNavigation } from '@react-navigation/native';
 import { useRecoilState } from 'recoil';
 import _ from 'lodash';
 import BottomSheet from 'react-native-gesture-bottom-sheet';
 
-import { Text } from '../../components/global';
+import { ScreenHeader, Text } from '../../components/global';
 import { useNow } from '../../hooks';
 import { getTimeInHourAndMinutes } from '../../utils/date';
 import { schedulesState } from '../../states';
 import { days, daysInBahasa, daysInEnglish } from '../../constants/date';
 
 const ScheduleScreen = () => {
-    const navigation = useNavigation();
     const [schedules] = useRecoilState(schedulesState);
     const menuRef = useRef(null);
     const [day, setDay] = useState(schedules.day);
@@ -52,32 +47,31 @@ const ScheduleScreen = () => {
     return (
         <SafeAreaView className="flex-1">
             {/* Header */}
-            <View className="px-5 py-4 flex-row justify-between items-center border-b border-gray-300 shadow-2xl">
-                <View className="flex-row items-center space-x-4">
-                    <TouchableOpacity onPress={navigation.goBack}>
-                        <ArrowLeftIcon color="black" />
-                    </TouchableOpacity>
-                    <Text className="font-semibold text-lg">
+            <ScreenHeader
+                title={
+                    <>
                         {_.capitalize(days[day || schedules.day].id)} &middot;{' '}
                         {schedules.class}
-                    </Text>
-                </View>
-                <TouchableOpacity
-                    onPress={() => menuRef.current.show()}
-                    className="flex-row items-center space-x-2"
-                >
-                    <View>
-                        {isChanged && (
-                            <View className="w-1.5 h-1.5 rounded-full bg-red-500 absolute top-0 right-0" />
-                        )}
-                        <AdjustmentsHorizontalIcon
-                            color={colors.blue[500]}
-                            size={20}
-                        />
-                    </View>
-                    <Text className="text-blue-500 font-medium">ubah</Text>
-                </TouchableOpacity>
-            </View>
+                    </>
+                }
+                rightElement={
+                    <TouchableOpacity
+                        onPress={() => menuRef.current.show()}
+                        className="flex-row items-center space-x-2"
+                    >
+                        <View>
+                            {isChanged && (
+                                <View className="w-1.5 h-1.5 rounded-full bg-red-500 absolute top-0 right-0" />
+                            )}
+                            <AdjustmentsHorizontalIcon
+                                color={colors.blue[500]}
+                                size={20}
+                            />
+                        </View>
+                        <Text className="text-blue-500 font-medium">ubah</Text>
+                    </TouchableOpacity>
+                }
+            />
 
             <FlatList
                 className="pt-0"
