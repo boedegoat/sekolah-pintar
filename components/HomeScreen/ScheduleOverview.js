@@ -1,67 +1,101 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import {
+    View,
+    ScrollView,
+    TouchableOpacity,
+    ActivityIndicator,
+} from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
 import colors from 'tailwindcss/colors';
 import { CalendarIcon, ForwardIcon } from 'react-native-heroicons/outline';
 import { useNavigation } from '@react-navigation/native';
 
-import { daftarPelajaranSenin } from '../../constants/dummyData';
-import { useNow } from '../../hooks';
+import { Text } from '../global';
+import { useFetch, useNow } from '../../hooks';
 import ScheduleSubject from './ScheduleSubject';
+import {
+    getDay,
+    getFullDate,
+    getTimeInHourAndMinutes,
+    getTomorrowDay,
+} from '../../utils/date';
 
 const ScheduleOverview = () => {
     const navigation = useNavigation();
-    const now = useNow();
     const [schoolEnd, setSchoolEnd] = useState(false);
 
+    const [schedules, loading] = useFetch(
+        '/schedules',
+        (data) => data.schedules
+    );
+
+    // const now = new Date('24 Oct 2022 15:20');
+    const now = useNow();
+    const currentTime = getTimeInHourAndMinutes(now);
+    const currentDay = getDay(now);
+
+    const [currentSchedule, setCurrentSchedule] = useState(null);
+
     useEffect(() => {
-        if (
-            new Date().setHours(15, 0) <= now &&
-            now < new Date().setHours(16, 0)
-        ) {
+        if (!schedules) return;
+        if (currentTime >= '15:00') {
+            if (currentDay === 'friday') {
+                setCurrentSchedule(schedules.monday);
+                return;
+            }
+            setCurrentSchedule(schedules[getTomorrowDay(now)]);
+            return;
+        }
+        if (['saturday', 'sunday'].includes(currentDay)) {
+            setCurrentSchedule(schedules.monday);
+            return;
+        }
+        setCurrentSchedule(schedules[currentDay]);
+    }, [schedules, currentTime]);
+
+    useEffect(() => {
+        if (currentTime >= '15:00' && currentTime < '16:00') {
             setSchoolEnd(true);
+            setCurrentSchedule(schedules?.[getTomorrowDay(now)]);
         } else {
             setSchoolEnd(false);
         }
-    }, [now]);
+    }, [currentTime]);
 
-    const mergedSchedule = useMemo(
-        () =>
-            daftarPelajaranSenin.reduce((result, curr) => {
-                const lastItem = result[result.length - 1];
+    const mergedSchedule = useMemo(() => {
+        return currentSchedule?.reduce((result, curr) => {
+            const lastItem = result[result.length - 1];
 
-                if (lastItem?.subjectId === curr.subjectId) {
-                    const updatedLastItem = {
-                        ...lastItem,
-                        jadwal:
-                            lastItem.jadwal.slice(0, 8) + curr.jadwal.slice(8),
-                    };
-                    result[result.length - 1] = updatedLastItem;
-                    return result;
-                }
+            if (lastItem?.subject.name === curr.subject.name) {
+                const updatedLastItem = {
+                    ...lastItem,
+                    endTime: curr.endTime,
+                };
+                result[result.length - 1] = updatedLastItem;
+                return result;
+            }
 
-                return [...result, curr];
-            }, []),
-        []
-    );
+            return [...result, curr];
+        }, []);
+    }, [currentSchedule]);
 
-    const currentSubjectIndex = useMemo(
-        () =>
-            mergedSchedule.findIndex((item) => {
-                const [start, end] = item.jadwal
-                    .split(' - ')
-                    .map((time) =>
-                        new Date().setHours(
-                            Number(time.slice(0, 2)),
-                            Number(time.slice(3))
-                        )
-                    );
+    const currentSubjectIndex = useMemo(() => {
+        if (['saturday', 'sunday'].includes(currentDay)) return undefined;
+        return mergedSchedule?.findIndex((item) => {
+            return currentTime >= item.startTime && currentTime < item.endTime;
+        });
+    }, [mergedSchedule, currentTime, currentDay]);
 
-                return start <= now && now < end;
-            }),
-        []
-    );
+    // TODO: setup skeleton
+    if (loading) {
+        return (
+            <View className="mx-5 flex-row items-center space-x-2">
+                <ActivityIndicator color={colors.blue[500]} />
+                <Text>Loading</Text>
+            </View>
+        );
+    }
 
-    const currentSubject = mergedSchedule[currentSubjectIndex];
+    const currentSubject = mergedSchedule?.[currentSubjectIndex];
 
     if (currentSubject) {
         const nextSubject = mergedSchedule[currentSubjectIndex + 1];
@@ -80,7 +114,7 @@ const ScheduleOverview = () => {
                             </Text>
                         </View>
                         <Text className="font-semibold">
-                            Senin, 22 Oktober 2022
+                            {getFullDate(now)}
                         </Text>
                     </View>
                     <Text className="text-blue-500 font-medium">
@@ -144,27 +178,28 @@ const ScheduleOverview = () => {
             <View className="mt-2">
                 <Text className="font-medium mb-3">Bawa buku</Text>
                 <View className="flex-row flex-wrap gap-3">
-                    <Text className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white bg-purple-600">
-                        1. Biologi
-                    </Text>
-                    <Text className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white bg-fuchsia-600">
-                        2. Matematika Minat
-                    </Text>
-                    <Text className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white bg-sky-600">
-                        3. Prakarya
-                    </Text>
-                    <Text className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white bg-blue-500">
-                        4. Seni Budaya
-                    </Text>
-                    <Text className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white bg-green-600">
-                        5. PPKN
-                    </Text>
+                    {mergedSchedule
+                        // filter subject that has taughtBy
+                        // and removes subject name duplicates
+                        ?.filter(
+                            ({ subject }, index) =>
+                                subject.taughtBy &&
+                                mergedSchedule.findIndex(
+                                    (s) => s.subject.name === subject.name
+                                ) === index
+                        )
+                        .map(({ subject }, index) => (
+                            <Text
+                                className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white"
+                                key={subject.name}
+                                style={{
+                                    backgroundColor: subject.color,
+                                }}
+                            >
+                                {index + 1}. {subject.name}
+                            </Text>
+                        ))}
                 </View>
-            </View>
-
-            {/* Agenda */}
-            <View className="mt-2">
-                <Text className="font-medium mt-3 mb-3">Agenda</Text>
             </View>
         </View>
     );

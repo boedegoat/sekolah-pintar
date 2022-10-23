@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import { useRecoilState } from 'recoil';
 import { StatusBar } from 'expo-status-bar';
-import { BellAlertIcon, MegaphoneIcon } from 'react-native-heroicons/outline';
+import { BellAlertIcon } from 'react-native-heroicons/outline';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { useNavigation } from '@react-navigation/native';
 
@@ -44,7 +44,9 @@ const HomeScreen = () => {
                         <Text className="font-semibold text-lg">
                             Halo, {user.nickname} 👋
                         </Text>
-                        <Text className="text-gray-600">Kelas 12 IPA 2</Text>
+                        <Text className="text-gray-600">
+                            Kelas {user.class}
+                        </Text>
                     </View>
                     <TouchableOpacity>
                         <Image
@@ -57,7 +59,7 @@ const HomeScreen = () => {
                 </View>
 
                 {/* Announcement */}
-                <View className="p-5 pt-0">
+                {/* <View className="p-5 pt-0">
                     <View className="p-3 border-2 border-red-400 rounded-xl bg-red-100">
                         <View className="absolute -top-2 -left-2 bg-red-500 rounded-full p-0.5 border border-red-400">
                             <MegaphoneIcon color="white" size={15} />
@@ -67,7 +69,7 @@ const HomeScreen = () => {
                             lantai 4
                         </Text>
                     </View>
-                </View>
+                </View> */}
 
                 {/* Schedule Overview */}
                 <ScheduleOverview />

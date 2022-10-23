@@ -1,7 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import cn from 'classnames';
-import colors from 'tailwindcss/colors';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 const ScheduleSubject = ({ subject, current, title }) => {
@@ -9,12 +8,13 @@ const ScheduleSubject = ({ subject, current, title }) => {
         <TouchableOpacity
             className={cn(
                 'w-[300px] mr-3 p-4 rounded-2xl',
-                (!current || !subject.color) && 'border-2 border-gray-400/50'
+                (!current || !subject.subject.color) &&
+                    'border-2 border-gray-400/50'
             )}
             style={
                 current
                     ? {
-                          backgroundColor: subject.color,
+                          backgroundColor: subject.subject.color || 'black',
                       }
                     : undefined
             }
@@ -25,9 +25,7 @@ const ScheduleSubject = ({ subject, current, title }) => {
                     style={
                         current
                             ? {
-                                  color: subject.color
-                                      ? 'white'
-                                      : colors.gray[600],
+                                  color: 'white',
                               }
                             : undefined
                     }
@@ -44,14 +42,14 @@ const ScheduleSubject = ({ subject, current, title }) => {
                 style={
                     current
                         ? {
-                              color: subject.color ? 'white' : colors.gray[600],
+                              color: 'white',
                           }
                         : undefined
                 }
             >
-                {subject.nama}
+                {subject.subject.name}
             </Text>
-            {subject.guru && (
+            {subject.subject.taughtBy && (
                 <View className="flex-row items-center space-x-2 mt-1">
                     <Image
                         source={{
@@ -63,14 +61,12 @@ const ScheduleSubject = ({ subject, current, title }) => {
                         style={
                             current
                                 ? {
-                                      color: subject.color
-                                          ? 'white'
-                                          : colors.gray[600],
+                                      color: 'white',
                                   }
                                 : undefined
                         }
                     >
-                        {subject.guru}
+                        {subject.subject.taughtBy}
                     </Text>
                 </View>
             )}

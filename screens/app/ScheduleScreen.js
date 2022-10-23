@@ -13,7 +13,7 @@ import { daftarPelajaranSenin } from '../../constants/dummyData';
 import { useNow } from '../../hooks';
 
 const ScheduleScreen = () => {
-    const now = useNow();
+    const now = new Date(useNow()).toLocaleTimeString().slice(0, 5);
     const navigation = useNavigation();
 
     return (
@@ -52,16 +52,8 @@ const ScheduleScreen = () => {
                     paddingHorizontal: 20,
                 }}
                 renderItem={({ item }) => {
-                    const [start, end] = item.jadwal
-                        .split(' - ')
-                        .map((time) =>
-                            new Date().setHours(
-                                Number(time.slice(0, 2)),
-                                Number(time.slice(3))
-                            )
-                        );
-
-                    const isCurrent = start <= now && now < end;
+                    const [start, end] = item.jadwal.split(' - ');
+                    const isCurrent = now >= start && now < end;
 
                     return (
                         <View className="mt-5">
