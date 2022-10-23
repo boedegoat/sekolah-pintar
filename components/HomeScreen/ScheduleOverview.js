@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import colors from 'tailwindcss/colors';
 import { CalendarIcon, ForwardIcon } from 'react-native-heroicons/outline';
 import { useNavigation } from '@react-navigation/native';
+import { useRecoilState } from 'recoil';
 
 import { Text } from '../global';
 import { useFetch, useNow } from '../../hooks';
@@ -18,44 +19,49 @@ import {
     getTimeInHourAndMinutes,
     getTomorrowDay,
 } from '../../utils/date';
+import { schedulesState } from '../../states';
 
 const ScheduleOverview = () => {
     const navigation = useNavigation();
     const [schoolEnd, setSchoolEnd] = useState(false);
+    const [schedules, setSchedules] = useRecoilState(schedulesState);
 
-    const [schedules, loading] = useFetch(
-        '/schedules',
-        (data) => data.schedules
-    );
+    const [data, loading] = useFetch('/schedules');
 
-    // const now = new Date('24 Oct 2022 09:15');
+    // const now = new Date('25 Oct 2022 09:15');
     const now = useNow();
     const currentTime = getTimeInHourAndMinutes(now);
     const currentDay = getDay(now);
 
-    const [currentSchedule, setCurrentSchedule] = useState(null);
+    useEffect(() => {
+        if (data) {
+            setSchedules((s) => ({ ...s, ...data }));
+        }
+    }, [data]);
 
     useEffect(() => {
-        if (!schedules) return;
         if (currentTime >= '15:00') {
             if (currentDay === 'friday') {
-                setCurrentSchedule(schedules.monday);
+                setSchedules((s) => ({ ...s, day: 'monday ' }));
                 return;
             }
-            setCurrentSchedule(schedules[getTomorrowDay(now)]);
+            setSchedules((s) => ({ ...s, day: getTomorrowDay(now) }));
             return;
         }
+
         if (['saturday', 'sunday'].includes(currentDay)) {
-            setCurrentSchedule(schedules.monday);
+            setSchedules((s) => ({ ...s, day: 'monday ' }));
             return;
         }
-        setCurrentSchedule(schedules[currentDay]);
-    }, [schedules, currentTime]);
+
+        setSchedules((s) => ({ ...s, day: currentDay }));
+    }, [currentTime]);
+
+    const currentSchedule = schedules.schedules?.[schedules.day];
 
     useEffect(() => {
         if (currentTime >= '15:00' && currentTime < '16:00') {
             setSchoolEnd(true);
-            setCurrentSchedule(schedules?.[getTomorrowDay(now)]);
         } else {
             setSchoolEnd(false);
         }
@@ -104,10 +110,7 @@ const ScheduleOverview = () => {
             <View>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('Schedule', {
-                            schedules,
-                            currentSchedule,
-                        });
+                        navigation.navigate('Schedule');
                     }}
                     className="mx-5 flex-row justify-between items-center"
                 >
@@ -123,7 +126,7 @@ const ScheduleOverview = () => {
                         </Text>
                     </View>
                     <Text className="text-blue-500 font-medium">
-                        selengkapnya →
+                        selengkapnya &rarr;
                     </Text>
                 </TouchableOpacity>
                 <ScrollView
@@ -174,7 +177,7 @@ const ScheduleOverview = () => {
                     onPress={() => navigation.navigate('Schedule')}
                 >
                     <Text className="text-blue-500 font-medium text-xs">
-                        Lihat jadwal lengkap
+                        Lihat jadwal lengkap &rarr;
                     </Text>
                 </TouchableOpacity>
             </View>

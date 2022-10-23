@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import {
     FlatList,
     Image,
@@ -6,52 +7,75 @@ import {
     View,
 } from 'react-native';
 import {
-    CalendarIcon,
-    ChevronDownIcon,
-    ChevronLeftIcon,
+    AdjustmentsHorizontalIcon,
+    ArrowLeftIcon,
 } from 'react-native-heroicons/outline';
 import colors from 'tailwindcss/colors';
 import cn from 'classnames';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { useRecoilState } from 'recoil';
+import _ from 'lodash';
+import BottomSheet from 'react-native-gesture-bottom-sheet';
 
 import { Text } from '../../components/global';
 import { useNow } from '../../hooks';
-import { getFullDate, getTimeInHourAndMinutes } from '../../utils/date';
+import { getTimeInHourAndMinutes } from '../../utils/date';
+import { schedulesState } from '../../states';
+import { days, daysInBahasa, daysInEnglish } from '../../constants/date';
 
 const ScheduleScreen = () => {
     const navigation = useNavigation();
-    const route = useRoute();
-    // TODO: save currentSchedule, schedules into Recoil atom
-    const { currentSchedule } = route.params;
-    // const now = new Date('24 Oct 2022 09:15');
+    const [schedules] = useRecoilState(schedulesState);
+    const menuRef = useRef(null);
+    const [day, setDay] = useState(schedules.day);
+    const [isChanged, setIsChanged] = useState(false);
+
+    // const now = new Date('25 Oct 2022 09:15');
     const now = useNow();
     const currentTime = getTimeInHourAndMinutes(now);
+
+    const changeDay = (newDay) => {
+        setDay(newDay);
+        menuRef.current.close();
+    };
+
+    useEffect(() => {
+        setIsChanged(false);
+
+        if (schedules.day !== day) {
+            setIsChanged(true);
+        }
+    }, [day]);
+
+    const currentSchedule = schedules.schedules?.[day || schedules.day];
 
     return (
         <SafeAreaView className="flex-1">
             {/* Header */}
-            <View className="px-5 py-3 flex-row justify-between items-center border-b border-gray-300">
-                <View className="flex-row items-center space-x-3">
+            <View className="px-5 py-4 flex-row justify-between items-center border-b border-gray-300 shadow-2xl">
+                <View className="flex-row items-center space-x-4">
                     <TouchableOpacity onPress={navigation.goBack}>
-                        <ChevronLeftIcon color={colors.gray[600]} />
+                        <ArrowLeftIcon color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
-                        <View className="font-semibold flex-row text-xs items-center space-x-1">
-                            <CalendarIcon size={13} color={colors.gray[600]} />
-                            <Text className="text-gray-600 text-[10px]">
-                                Jadwal Pelajaran
-                            </Text>
-                        </View>
-                        <Text className="font-semibold">
-                            {getFullDate(now)}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity className="border border-gray-400 p-1 rounded-lg flex-row items-center space-x-1">
-                    <Text className="font-medium text-gray-600 text-xs">
-                        12 IPA 2
+                    <Text className="font-semibold text-lg">
+                        {_.capitalize(days[day || schedules.day].id)} &middot;{' '}
+                        {schedules.class}
                     </Text>
-                    <ChevronDownIcon color={colors.gray[600]} size={15} />
+                </View>
+                <TouchableOpacity
+                    onPress={() => menuRef.current.show()}
+                    className="flex-row items-center space-x-2"
+                >
+                    <View>
+                        {isChanged && (
+                            <View className="w-1.5 h-1.5 rounded-full bg-red-500 absolute top-0 right-0" />
+                        )}
+                        <AdjustmentsHorizontalIcon
+                            color={colors.blue[500]}
+                            size={20}
+                        />
+                    </View>
+                    <Text className="text-blue-500 font-medium">ubah</Text>
                 </TouchableOpacity>
             </View>
 
@@ -145,6 +169,66 @@ const ScheduleScreen = () => {
                     );
                 }}
             />
+
+            <BottomSheet ref={menuRef} height={400} hasDraggableIcon>
+                <View className="p-5 space-y-6">
+                    <View>
+                        <Text className="font-medium text-lg text-center">
+                            Ubah Kelas
+                        </Text>
+                        <View className="mt-3 flex-row justify-center">
+                            <TouchableOpacity>
+                                <Text className="text-blue-500 font-semibold">
+                                    12 IPA 2
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View>
+                        <Text className="font-medium text-lg text-center">
+                            Ubah hari
+                        </Text>
+                        <View className="mt-3 space-y-2">
+                            {daysInBahasa
+                                .filter(
+                                    (dayInBahasa) =>
+                                        !['sabtu', 'minggu'].includes(
+                                            dayInBahasa
+                                        )
+                                )
+                                .map((dayInBahasa) => (
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            changeDay(
+                                                daysInEnglish[
+                                                    daysInBahasa.indexOf(
+                                                        dayInBahasa
+                                                    )
+                                                ]
+                                            )
+                                        }
+                                        key={dayInBahasa}
+                                    >
+                                        <Text
+                                            className={cn(
+                                                'font-medium text-center',
+                                                daysInEnglish[
+                                                    daysInBahasa.indexOf(
+                                                        dayInBahasa
+                                                    )
+                                                ] === (day || schedules.day) &&
+                                                    'text-blue-500 font-semibold'
+                                            )}
+                                        >
+                                            {_.capitalize(dayInBahasa)}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                        </View>
+                    </View>
+                </View>
+            </BottomSheet>
         </SafeAreaView>
     );
 };
