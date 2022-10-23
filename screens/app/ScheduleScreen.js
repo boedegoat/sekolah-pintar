@@ -1,4 +1,10 @@
-import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import {
+    FlatList,
+    Image,
+    SafeAreaView,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import {
     CalendarIcon,
     ChevronDownIcon,
@@ -6,15 +12,20 @@ import {
 } from 'react-native-heroicons/outline';
 import colors from 'tailwindcss/colors';
 import cn from 'classnames';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { Text } from '../../components/global';
-import { daftarPelajaranSenin } from '../../constants/dummyData';
 import { useNow } from '../../hooks';
+import { getFullDate, getTimeInHourAndMinutes } from '../../utils/date';
 
 const ScheduleScreen = () => {
-    const now = new Date(useNow()).toLocaleTimeString().slice(0, 5);
     const navigation = useNavigation();
+    const route = useRoute();
+    // TODO: save currentSchedule, schedules into Recoil atom
+    const { currentSchedule } = route.params;
+    // const now = new Date('24 Oct 2022 09:15');
+    const now = useNow();
+    const currentTime = getTimeInHourAndMinutes(now);
 
     return (
         <SafeAreaView className="flex-1">
@@ -32,7 +43,7 @@ const ScheduleScreen = () => {
                             </Text>
                         </View>
                         <Text className="font-semibold">
-                            Senin, 22 Oktober 2022
+                            {getFullDate(now)}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -46,14 +57,15 @@ const ScheduleScreen = () => {
 
             <FlatList
                 className="pt-0"
-                data={daftarPelajaranSenin}
+                data={currentSchedule}
                 contentContainerStyle={{
                     paddingBottom: 18,
                     paddingHorizontal: 20,
                 }}
                 renderItem={({ item }) => {
-                    const [start, end] = item.jadwal.split(' - ');
-                    const isCurrent = now >= start && now < end;
+                    const isCurrent =
+                        currentTime >= item.startTime &&
+                        currentTime < item.endTime;
 
                     return (
                         <View className="mt-5">
@@ -67,9 +79,7 @@ const ScheduleScreen = () => {
                                 <View
                                     className={cn(
                                         'relative p-2.5 rounded-xl',
-                                        isCurrent
-                                            ? 'bg-gray-600'
-                                            : 'bg-gray-200'
+                                        isCurrent ? 'bg-black' : 'bg-gray-200'
                                     )}
                                 >
                                     {isCurrent && (
@@ -77,7 +87,7 @@ const ScheduleScreen = () => {
                                             className="absolute h-[24px] w-[5px] rounded-full top-2 -left-0.5"
                                             style={{
                                                 backgroundColor:
-                                                    item.color ||
+                                                    item.subject.color ||
                                                     colors.gray[500],
                                             }}
                                         />
@@ -90,7 +100,7 @@ const ScheduleScreen = () => {
                                                 : 'text-black'
                                         )}
                                     >
-                                        {item.jadwal}
+                                        {item.startTime} - {item.endTime}
                                     </Text>
                                 </View>
 
@@ -98,27 +108,34 @@ const ScheduleScreen = () => {
                                 <View
                                     className={cn(
                                         'flex-1 p-2.5 rounded-xl',
-                                        !item.color &&
+                                        !item.subject.color &&
                                             'border border-gray-400/50'
                                     )}
                                     style={{
-                                        backgroundColor: item.color || 'white',
+                                        backgroundColor:
+                                            item.subject.color || 'white',
                                     }}
                                 >
                                     <Text
                                         className={cn(
                                             'font-semibold',
-                                            item.color
+                                            item.subject.color
                                                 ? 'text-white'
                                                 : 'text-black'
                                         )}
                                     >
-                                        {item.nama}
+                                        {item.subject.name}
                                     </Text>
-                                    {item.guru && (
-                                        <View>
+                                    {item.subject.taughtBy && (
+                                        <View className="flex-row items-center space-x-2 mt-1">
+                                            <Image
+                                                source={{
+                                                    uri: `https://avatars.dicebear.com/api/big-ears-neutral/${item.subject.taughtBy}.png`,
+                                                }}
+                                                className="w-4 h-4 rounded-full"
+                                            />
                                             <Text className="text-white text-xs">
-                                                {item.guru}
+                                                {item.subject.taughtBy}
                                             </Text>
                                         </View>
                                     )}

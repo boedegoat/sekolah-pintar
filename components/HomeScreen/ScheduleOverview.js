@@ -28,7 +28,7 @@ const ScheduleOverview = () => {
         (data) => data.schedules
     );
 
-    // const now = new Date('24 Oct 2022 15:20');
+    // const now = new Date('24 Oct 2022 09:15');
     const now = useNow();
     const currentTime = getTimeInHourAndMinutes(now);
     const currentDay = getDay(now);
@@ -103,7 +103,12 @@ const ScheduleOverview = () => {
         return (
             <View>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Schedule')}
+                    onPress={() => {
+                        navigation.navigate('Schedule', {
+                            schedules,
+                            currentSchedule,
+                        });
+                    }}
                     className="mx-5 flex-row justify-between items-center"
                 >
                     <View>

@@ -53,7 +53,7 @@ const ScheduleSubject = ({ subject, current, title }) => {
                 <View className="flex-row items-center space-x-2 mt-1">
                     <Image
                         source={{
-                            uri: 'https://avatars.dicebear.com/api/big-ears-neutral/gilang.png',
+                            uri: `https://avatars.dicebear.com/api/big-ears-neutral/${subject.subject.taughtBy}.png`,
                         }}
                         className="w-6 h-6 rounded-full"
                     />

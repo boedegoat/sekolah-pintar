@@ -6,7 +6,7 @@ export const getDay = (date) => {
 };
 
 export const getFullDate = (date) => {
-    return moment(date).locale('id').format('D, MMMM YYYY');
+    return moment(date).locale('id').format('dddd, D MMMM YYYY');
 };
 
 export const getTimeInHourAndMinutes = (date) => {
