@@ -4,6 +4,7 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
+    Alert,
 } from 'react-native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -63,12 +64,31 @@ const AgendaItemScreen = ({ route }) => {
         setBody(currentAgenda.body);
     }, [currentMode]);
 
-    console.log(currentAgenda);
-
     const deleteAgenda = () => {
-        const index = agendas.findIndex((agenda) => agenda.id === agendaId);
-        setAgendas((a) => [...a.slice(0, index), ...a.slice(index + 1)]);
-        navigation.navigate('Agenda');
+        Alert.alert(
+            'Konfirmasi menghapus',
+            'Yakin bro mau hapus agenda ini ?',
+            [
+                {
+                    text: 'Gajadi',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Hapus',
+                    onPress: () => {
+                        navigation.navigate('Agenda');
+                        const index = agendas.findIndex(
+                            (agenda) => agenda.id === agendaId
+                        );
+                        setAgendas((a) => [
+                            ...a.slice(0, index),
+                            ...a.slice(index + 1),
+                        ]);
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
 
     return (
