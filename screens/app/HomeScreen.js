@@ -5,11 +5,12 @@ import {
     View,
     Image,
 } from 'react-native';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { StatusBar } from 'expo-status-bar';
 import {
     ArrowLeftOnRectangleIcon,
+    ClockIcon,
     Squares2X2Icon,
 } from 'react-native-heroicons/outline';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,17 +18,30 @@ import BottomSheet from 'react-native-gesture-bottom-sheet';
 
 import colors from 'tailwindcss/colors';
 import { Text } from '../../components/global';
-import { userState } from '../../states';
-import { ScheduleOverview, QuickButtons } from '../../components/HomeScreen';
+import { customTimeState, userState } from '../../states';
+import {
+    ScheduleOverview,
+    QuickButtons,
+    CustomTimePrompt,
+} from '../../components/HomeScreen';
 
 const HomeScreen = () => {
     const [user, setUser] = useRecoilState(userState);
+    const [customTime] = useRecoilState(customTimeState);
+    const [showCustomTimePrompt, setShowCustomTimePrompt] = useState(false);
     const userMenuRef = useRef(null);
 
     const logout = () => {
         AsyncStorage.removeItem('accessToken');
         setUser(null);
     };
+
+    const showCustomTimePromptHandler = () => {
+        userMenuRef.current.close();
+        setShowCustomTimePrompt(true);
+    };
+
+    console.log({ customTime });
 
     return (
         <SafeAreaView className="flex-1">
@@ -113,8 +127,20 @@ const HomeScreen = () => {
                 </View>
             </ScrollView>
 
-            <BottomSheet ref={userMenuRef} height={200} hasDraggableIcon>
-                <View className="p-5 space-y-6">
+            <CustomTimePrompt
+                visible={showCustomTimePrompt}
+                onClose={() => setShowCustomTimePrompt(false)}
+            />
+
+            <BottomSheet ref={userMenuRef} height={150} hasDraggableIcon>
+                <View className="p-5 space-y-3.5">
+                    <TouchableOpacity
+                        onPress={showCustomTimePromptHandler}
+                        className="flex-row items-center space-x-2"
+                    >
+                        <ClockIcon color="black" size={20} />
+                        <Text className="font-medium">Custom waktu</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={logout}
                         className="flex-row items-center space-x-2"

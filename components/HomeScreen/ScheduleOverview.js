@@ -19,17 +19,18 @@ import {
     getTimeInHourAndMinutes,
     getTomorrowDay,
 } from '../../utils/date';
-import { schedulesState } from '../../states';
+import { customTimeState, schedulesState } from '../../states';
 
 const ScheduleOverview = () => {
     const navigation = useNavigation();
     const [schoolEnd, setSchoolEnd] = useState(false);
     const [schedules, setSchedules] = useRecoilState(schedulesState);
+    const [customTime] = useRecoilState(customTimeState);
 
     const [data, loading] = useFetch('/schedules');
 
     // const now = new Date('25 Oct 2022 09:15');
-    const now = useNow();
+    const now = customTime ?? useNow();
     const currentTime = getTimeInHourAndMinutes(now);
     const currentDay = getDay(now);
 

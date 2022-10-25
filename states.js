@@ -18,3 +18,8 @@ export const agendasState = atom({
     key: 'agendasState',
     default: [],
 });
+
+export const customTimeState = atom({
+    key: 'customTimeState',
+    default: null,
+});
