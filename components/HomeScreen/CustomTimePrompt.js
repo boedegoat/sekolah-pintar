@@ -53,11 +53,14 @@ const CustomTimePrompt = ({ visible, onClose }) => {
                         ini menampilkan jadwal pelajaran.
                     </Text>
                     <Text className="mt-1 text-xs">
-                        format: tgl bulan tahun jam
+                        contoh: 25 oct 2022 11:00
+                    </Text>
+                    <Text className="mt-1 text-xs">
+                        hapus semua untuk mereset
                     </Text>
                     <TextInput
                         className="text-[14px]"
-                        placeholder="(e.g. 27 Oct 2022 08:00)"
+                        placeholder="tanggal bulan tahun jam"
                         value={timeInput}
                         onChangeText={(text) => setTimeInput(text)}
                     />

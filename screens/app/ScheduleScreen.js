@@ -16,18 +16,17 @@ import BottomSheet from 'react-native-gesture-bottom-sheet';
 import { ScreenHeader, Text } from '../../components/global';
 import { useNow } from '../../hooks';
 import { getTimeInHourAndMinutes } from '../../utils/date';
-import { customTimeState, schedulesState } from '../../states';
+import { schedulesState } from '../../states';
 import { days, daysInBahasa, daysInEnglish } from '../../constants/date';
 
 const ScheduleScreen = () => {
     const [schedules] = useRecoilState(schedulesState);
-    const [customTime] = useRecoilState(customTimeState);
     const menuRef = useRef(null);
     const [day, setDay] = useState(schedules.day);
     const [isChanged, setIsChanged] = useState(false);
 
     // const now = new Date('25 Oct 2022 09:15');
-    const now = customTime ?? useNow();
+    const now = useNow();
     const currentTime = getTimeInHourAndMinutes(now);
 
     const changeDay = (newDay) => {

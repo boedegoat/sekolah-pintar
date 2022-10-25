@@ -19,18 +19,17 @@ import {
     getTimeInHourAndMinutes,
     getTomorrowDay,
 } from '../../utils/date';
-import { customTimeState, schedulesState } from '../../states';
+import { schedulesState } from '../../states';
 
 const ScheduleOverview = () => {
     const navigation = useNavigation();
     const [schoolEnd, setSchoolEnd] = useState(false);
     const [schedules, setSchedules] = useRecoilState(schedulesState);
-    const [customTime] = useRecoilState(customTimeState);
 
     const [data, loading] = useFetch('/schedules');
 
     // const now = new Date('25 Oct 2022 09:15');
-    const now = customTime ?? useNow();
+    const now = useNow();
     const currentTime = getTimeInHourAndMinutes(now);
     const currentDay = getDay(now);
 
@@ -51,14 +50,12 @@ const ScheduleOverview = () => {
         }
 
         if (['saturday', 'sunday'].includes(currentDay)) {
-            setSchedules((s) => ({ ...s, day: 'monday ' }));
+            setSchedules((s) => ({ ...s, day: 'monday' }));
             return;
         }
 
         setSchedules((s) => ({ ...s, day: currentDay }));
     }, [currentTime]);
-
-    const currentSchedule = schedules.schedules?.[schedules.day];
 
     useEffect(() => {
         if (currentTime >= '15:00' && currentTime < '16:00') {
@@ -67,6 +64,8 @@ const ScheduleOverview = () => {
             setSchoolEnd(false);
         }
     }, [currentTime]);
+
+    const currentSchedule = schedules.schedules?.[schedules.day];
 
     const mergedSchedule = useMemo(() => {
         return currentSchedule?.reduce((result, curr) => {
@@ -91,6 +90,8 @@ const ScheduleOverview = () => {
             return currentTime >= item.startTime && currentTime < item.endTime;
         });
     }, [mergedSchedule, currentTime, currentDay]);
+
+    console.log({ now });
 
     // TODO: setup skeleton
     if (loading) {
@@ -197,7 +198,7 @@ const ScheduleOverview = () => {
                                     (s) => s.subject.name === subject.name
                                 ) === index
                         )
-                        .map(({ subject }, index) => (
+                        ?.map(({ subject }, index) => (
                             <Text
                                 className="w-[40%] flex-grow p-2 rounded-lg font-medium text-white"
                                 key={subject.name}
