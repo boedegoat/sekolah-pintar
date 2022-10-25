@@ -42,7 +42,7 @@ const ScheduleOverview = () => {
     useEffect(() => {
         if (currentTime >= '15:00') {
             if (currentDay === 'friday') {
-                setSchedules((s) => ({ ...s, day: 'monday ' }));
+                setSchedules((s) => ({ ...s, day: 'monday' }));
                 return;
             }
             setSchedules((s) => ({ ...s, day: getTomorrowDay(now) }));
