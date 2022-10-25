@@ -4,6 +4,7 @@ import {
     SafeAreaView,
     TouchableOpacity,
     Keyboard,
+    ScrollView,
 } from 'react-native';
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -13,7 +14,6 @@ import {
     ExclamationCircleIcon,
 } from 'react-native-heroicons/outline';
 import loadash from 'lodash';
-import { useToast } from 'react-native-toast-notifications';
 import { useSetRecoilState } from 'recoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -31,42 +31,29 @@ const Login = () => {
     const [errors, setErrors] = useState({});
     const [showInfoModal, setShowInfoModal] = useState(false);
     const setUser = useSetRecoilState(userState);
-    const toast = useToast();
     // const navigation = useNavigation();
 
     const isValid = Boolean(loadash.isEmpty(errors) && email && password);
 
     const loginWithEmail = async () => {
         Keyboard.dismiss();
-        let id;
 
         try {
-            id = toast.show('Loading...', {
-                type: 'loading',
-                swipeEnabled: false,
-                duration: 99999,
-            });
-
             const { data: response } = await request.post('/auth/login', {
                 email,
                 password,
             });
 
-            AsyncStorage.setItem('accessToken', response.data.accessToken);
+            await AsyncStorage.setItem(
+                'accessToken',
+                response.data.accessToken
+            );
             setUser(response.data.user);
 
-            toast.update(id, 'Berhasil masuk', {
-                type: 'success',
-                duration: 3000,
-                swipeEnabled: true,
-            });
+            console.log({ user: response.data.user });
         } catch (error) {
             console.log({ error });
-            toast.update(id, error.message, {
-                type: 'error',
-                duration: 3000,
-                swipeEnabled: true,
-            });
+            alert(error.message);
         }
     };
 
@@ -84,7 +71,7 @@ const Login = () => {
                 source={backToSchool}
                 className="w-full h-[50%] object-contain"
             />
-            <View className="absolute top-[45%] bottom-0 w-full bg-white p-8 rounded-t-3xl">
+            <ScrollView className="absolute top-[45%] bottom-0 w-full bg-white p-8 rounded-t-3xl">
                 {/* Header */}
                 <View className="flex-row justify-between items-center">
                     <Text
@@ -144,7 +131,7 @@ const Login = () => {
                         </Text>
                     </TouchableOpacity> */}
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };

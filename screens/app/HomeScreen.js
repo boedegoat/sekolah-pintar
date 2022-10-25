@@ -5,29 +5,29 @@ import {
     View,
     Image,
 } from 'react-native';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { StatusBar } from 'expo-status-bar';
-import { Squares2X2Icon } from 'react-native-heroicons/outline';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useNavigation } from '@react-navigation/native';
+import {
+    ArrowLeftOnRectangleIcon,
+    Squares2X2Icon,
+} from 'react-native-heroicons/outline';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BottomSheet from 'react-native-gesture-bottom-sheet';
 
+import colors from 'tailwindcss/colors';
 import { Text } from '../../components/global';
 import { userState } from '../../states';
 import { ScheduleOverview, QuickButtons } from '../../components/HomeScreen';
 
-// TODO: bikin sistem jadwal pelajaran dan agenda
-
 const HomeScreen = () => {
-    const [user] = useRecoilState(userState);
-    // const navigation = useNavigation();
+    const [user, setUser] = useRecoilState(userState);
+    const userMenuRef = useRef(null);
 
-    // const logout = () => {
-    //     AsyncStorage.removeItem('accessToken');
-    //     setUser(null);
-    // };
-
-    console.log({ user });
+    const logout = () => {
+        AsyncStorage.removeItem('accessToken');
+        setUser(null);
+    };
 
     return (
         <SafeAreaView className="flex-1">
@@ -48,7 +48,9 @@ const HomeScreen = () => {
                             Kelas {user.class}
                         </Text>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => userMenuRef.current.show()}
+                    >
                         <Image
                             source={{
                                 uri: user.imageUrl,
@@ -110,6 +112,21 @@ const HomeScreen = () => {
                     </View>
                 </View>
             </ScrollView>
+
+            <BottomSheet ref={userMenuRef} height={200} hasDraggableIcon>
+                <View className="p-5 space-y-6">
+                    <TouchableOpacity
+                        onPress={logout}
+                        className="flex-row items-center space-x-2"
+                    >
+                        <ArrowLeftOnRectangleIcon
+                            color={colors.red[500]}
+                            size={20}
+                        />
+                        <Text className="font-medium text-red-500">Logout</Text>
+                    </TouchableOpacity>
+                </View>
+            </BottomSheet>
         </SafeAreaView>
     );
 };

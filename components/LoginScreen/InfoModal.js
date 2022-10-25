@@ -1,11 +1,4 @@
-import {
-    View,
-    Text,
-    Modal,
-    Pressable,
-    TouchableOpacity,
-    Linking,
-} from 'react-native';
+import { View, Text, Modal, Pressable, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 
@@ -42,22 +35,6 @@ const InfoModal = ({ visible, onClose }) => {
                             <Text>email: budi@smapj.id</Text>
                             <Text>password: budiganteng</Text>
                         </View>
-                    </View>
-                    <View className="mt-2">
-                        <Text>
-                            Untuk masuk dengan QR Code, buka{' '}
-                            <Text
-                                onPress={() =>
-                                    Linking.openURL(
-                                        'https://sekolahpintar.vercel.app/images/qrcode-budi.png'
-                                    )
-                                }
-                                className="text-blue-500 underline"
-                            >
-                                link ini
-                            </Text>{' '}
-                            di komputer/laptop Anda untuk melihat QR Code nya.
-                        </Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => onClose(false)}

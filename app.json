@@ -23,7 +23,8 @@
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "package": "com.bhremada.sekolahpintar"
+            "package": "com.bhremada.sekolahpintar",
+            "softwareKeyboardLayoutMode": "resize"
         },
         "web": {
             "favicon": "./assets/favicon.png"

@@ -9,7 +9,6 @@ const toastTypes = {
     loading: Toast.LoadingToast,
     success: Toast.SuccessToast,
     error: Toast.ErrorToast,
-    custom: Toast.CustomToast,
 };
 
 const App = () => {
