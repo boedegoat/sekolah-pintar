@@ -33,3 +33,7 @@ export const ErrorToast = (toast) => (
         {toast.message}
     </Toast>
 );
+
+export const CustomToast = (toast) => (
+    <Toast icon={toast.icon}>{toast.message}</Toast>
+);

@@ -22,10 +22,16 @@
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#FFFFFF"
-            }
+            },
+            "package": "com.bhremada.sekolahpintar"
         },
         "web": {
             "favicon": "./assets/favicon.png"
+        },
+        "extra": {
+            "eas": {
+                "projectId": "d41fe997-7b4e-42d0-b34b-b51c93568a6f"
+            }
         }
     }
 }

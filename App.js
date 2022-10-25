@@ -9,6 +9,7 @@ const toastTypes = {
     loading: Toast.LoadingToast,
     success: Toast.SuccessToast,
     error: Toast.ErrorToast,
+    custom: Toast.CustomToast,
 };
 
 const App = () => {
@@ -20,15 +21,13 @@ const App = () => {
         'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
     });
 
-    console.log({ fontsLoaded });
-
     if (!fontsLoaded) {
         return null;
     }
 
     return (
         <RecoilRoot>
-            <ToastProvider placement="top" offset={50} renderType={toastTypes}>
+            <ToastProvider placement="top" offset={20} renderType={toastTypes}>
                 <NavContainer />
             </ToastProvider>
         </RecoilRoot>

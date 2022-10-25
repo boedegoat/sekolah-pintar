@@ -13,3 +13,8 @@ export const schedulesState = atom({
         schedules: null,
     },
 });
+
+export const agendasState = atom({
+    key: 'agendasState',
+    default: [],
+});

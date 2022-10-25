@@ -1,3 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
 import { View, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 import {
     AdjustmentsHorizontalIcon,
@@ -5,26 +8,58 @@ import {
     PlusIcon,
     TagIcon,
 } from 'react-native-heroicons/outline';
+import { useRecoilState } from 'recoil';
 import colors from 'tailwindcss/colors';
+
+// import request from '../../utils/request';
 import { ScreenHeader, Text } from '../../components/global';
+import { agendasState } from '../../states';
 import { getFullDate } from '../../utils/date';
 
-const agendas = [
-    {
-        title: 'apa kek',
-        tags: ['biologi', 'tugas'],
-        createdAt: new Date('22 Oct 2022 7:40'),
-        body: 'lorem lorem apa yang...',
-    },
-    {
-        title: 'Gabut aje',
-        tags: ['gabut'],
-        createdAt: new Date('21 Oct 2022 7:40'),
-        body: 'lorem lorem apa yang...',
-    },
-];
-
 const AgendaScreen = () => {
+    const navigation = useNavigation();
+    const [agendas, setAgendas] = useRecoilState(agendasState);
+
+    useEffect(() => {
+        const getAgendasFromStorage = async () => {
+            const agendasInStorage = await AsyncStorage.getItem('agendas');
+
+            if (agendasInStorage) {
+                setAgendas(JSON.parse(agendasInStorage));
+            }
+        };
+
+        getAgendasFromStorage();
+    }, []);
+
+    useEffect(() => {
+        const saveAgendasToStorage = async () => {
+            await AsyncStorage.setItem('agendas', JSON.stringify(agendas));
+        };
+
+        saveAgendasToStorage();
+    }, [agendas]);
+
+    const createNewAgenda = () => {
+        // request.post('/agendas', {
+        //     title: '',
+        //     body: '',
+        // });
+        const id = Date.now();
+        setAgendas((a) => [
+            ...a,
+            {
+                id,
+                title: '',
+                tags: [],
+                body: '',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+        ]);
+        navigation.navigate('AgendaDetails', { id, mode: 'edit' });
+    };
+
     return (
         <SafeAreaView className="flex-1">
             {/* Header */}
@@ -32,7 +67,10 @@ const AgendaScreen = () => {
                 title="Agenda"
                 rightElement={
                     <View className="flex-row items-center space-x-2">
-                        <TouchableOpacity className="flex-row items-center space-x-2">
+                        <TouchableOpacity
+                            onPress={createNewAgenda}
+                            className="flex-row items-center space-x-2"
+                        >
                             <PlusIcon color={colors.blue[500]} size={20} />
                             <Text className="text-xs font-medium text-blue-500">
                                 Buat baru
@@ -57,13 +95,20 @@ const AgendaScreen = () => {
 
             {/* Agenda List */}
             <View className="flex-1 mx-5">
-                {agendas.length !== 0 ? (
+                {agendas.length > 0 ? (
                     <FlatList
                         data={agendas}
                         renderItem={({ item }) => (
-                            <TouchableOpacity className="p-3 rounded-xl border-2 border-gray-400/50 mt-5">
+                            <TouchableOpacity
+                                onPress={() =>
+                                    navigation.navigate('AgendaDetails', {
+                                        id: item.id,
+                                    })
+                                }
+                                className="p-3 rounded-xl border-2 border-gray-400/50 mt-5"
+                            >
                                 <Text className="font-semibold text-lg">
-                                    {item.title}
+                                    {item.title || 'Tanpa judul'}
                                 </Text>
                                 <View className="flex-row space-x-1 items-center">
                                     <CalendarIcon
@@ -74,15 +119,17 @@ const AgendaScreen = () => {
                                         {getFullDate(item.createdAt)}
                                     </Text>
                                 </View>
-                                <View className="flex-row space-x-1 items-center">
-                                    <TagIcon
-                                        size={15}
-                                        color={colors.gray[600]}
-                                    />
-                                    <Text className="text-gray-600 text-xs">
-                                        {item.tags.join(', ')}
-                                    </Text>
-                                </View>
+                                {item.tags.length > 0 && (
+                                    <View className="flex-row space-x-1 items-center">
+                                        <TagIcon
+                                            size={15}
+                                            color={colors.gray[600]}
+                                        />
+                                        <Text className="text-gray-600 text-xs">
+                                            {item.tags.join(', ')}
+                                        </Text>
+                                    </View>
+                                )}
                             </TouchableOpacity>
                         )}
                     />
@@ -90,7 +137,10 @@ const AgendaScreen = () => {
                     // Empty agenda view
                     <View className="flex-1 items-center justify-center">
                         <Text>Anda belum punya agenda nih...</Text>
-                        <TouchableOpacity className="flex-row items-center space-x-2 mt-2">
+                        <TouchableOpacity
+                            onPress={createNewAgenda}
+                            className="flex-row items-center space-x-2 mt-2"
+                        >
                             <PlusIcon color={colors.blue[500]} />
                             <Text className="font-medium text-blue-500">
                                 Buat agenda baru
